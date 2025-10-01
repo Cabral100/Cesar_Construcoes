@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cesar Construções – Especialista em Porcelanataria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --color-background: #f8f9fa;
+            --color-text: #212529;
+            --color-primary: #0D5A95;
+            --color-secondary: #3DA9DE;
+            --color-dark: #1D242B;
+            --color-subtle: #6c757d;
+            --color-section-white: #FFFFFF;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Montserrat', sans-serif;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background-color: var(--color-background);
+            color: var(--color-text);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        body.no-scroll {
+            overflow: hidden;
+        }
+        
+        /* LOADER ATUALIZADO */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background-color: var(--color-dark); /* COR ALTERADA */
+            z-index: 9999; display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #loader img { max-width: 200px; animation: fadeIn 1.5s ease-in-out; }
+        #loader.hidden { opacity: 0; visibility: hidden; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* HEADER */
+        .site-header {
+            position: fixed; top: 0; left: 0; right: 0; 
+            background: var(--color-dark);
+            z-index: 1000; padding: 0.5rem 2rem; 
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .site-header.scrolled {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .header-content {
+            display: flex; justify-content: space-between; align-items: center; max-width: 1400px;
+            margin: 0 auto; height: 90px;
+        }
+        .header-logo { height: 80px; }
+        .nav-menu { display: flex; list-style: none; gap: 2rem; }
+        .nav-menu a {
+            color: var(--color-section-white);
+            text-decoration: none; font-weight: 500;
+            transition: color 0.3s ease; position: relative; white-space: nowrap;
+        }
+        .nav-menu a:hover { color: var(--color-secondary); }
+        .nav-menu a::after { display: none; }
+        
+        /* MENU MOBILE */
+        .mobile-menu-toggle { display: none; background: none; border: none; color: var(--color-section-white); font-size: 1.8rem; cursor: pointer; z-index: 1002; }
+        .mobile-menu-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--color-dark);
+            z-index: 1001; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transform: translateY(-100%); transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .mobile-menu-overlay.active { transform: translateY(0); }
+        .mobile-menu-logo { max-height: 100px; margin-bottom: 3rem; }
+        .mobile-menu-close { position: absolute; top: 2rem; right: 2rem; background: none; border: none; color: var(--color-section-white); font-size: 2.5rem; cursor: pointer; }
+        .mobile-nav-menu { list-style: none; text-align: center; }
+        .mobile-nav-menu li { margin: 1.5rem 0; }
+        .mobile-nav-menu a { color: var(--color-section-white); text-decoration: none; font-size: 1.6rem; font-weight: 500; }
+        
+        /* BOTÕES FLUTUANTES */
+        .whatsapp-float {
+            position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #25D366; border-radius: 50%; width: 60px; height: 60px;
+            display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+            animation: pulse 2s infinite; text-decoration: none;
+        }
+        .whatsapp-float i { font-size: 28px; color: white; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
+        
+        #backToTopBtn {
+            position: fixed; bottom: 90px; right: 20px; z-index: 999; background-color: var(--color-primary); color: white;
+            border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 22px; cursor: pointer;
+            opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); display: flex; justify-content: center; align-items: center;
+        }
+        #backToTopBtn.show { opacity: 1; visibility: visible; }
+        #backToTopBtn:hover { transform: scale(1.1); }
+
+        /* UTILITÁRIOS DE SEÇÃO */
+        section { padding: 6rem 2rem; }
+        .section-title-wrapper { text-align: center; margin-bottom: 4rem; }
+        .section-title {
+            font-size: clamp(2.2rem, 5vw, 3rem); font-family: var(--font-heading); color: var(--color-text);
+            position: relative; display: inline-block; padding-bottom: 15px;
+        }
+        .section-title::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 80px; height: 4px; background-color: var(--color-primary);
+        }
+        
+        /* HERO COM CAROUSEL DRAGGABLE */
+        .hero-section {
+            height: 100vh; position: relative; overflow: hidden;
+            display: grid; place-content: center; text-align: center;
+            cursor: grab;
+        }
+        .hero-carousel-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2; display: flex;
+            transition: transform 0.5s ease-out;
+        }
+        .carousel-slide {
+            min-width: 100%; height: 100%;
+        }
+        .carousel-slide img {
+            width: 100%; height: 100%; object-fit: cover;
+            user-select: none; pointer-events: none; /* Impede arrastar a imagem */
+        }
+        .carousel-dots {
+            position: absolute; bottom: 30px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; gap: 10px; z-index: 10;
+        }
+        .carousel-dots .dot {
+            width: 12px; height: 12px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%; cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .carousel-dots .dot.active {
+            background-color: white;
+        }
+        .hero-section::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6); z-index: -1;
+        }
+        .hero-content { max-width: 800px; padding: 0 1rem; position: relative; z-index: 1; }
+        .hero-section h1 { font-size: clamp(2.8rem, 6vw, 4.5rem); margin-bottom: 1rem; font-family: var(--font-heading); color: #FFFFFF; }
+        .hero-section p { font-size: clamp(1rem, 2vw, 1.25rem); color: #f0f0f0; max-width: 600px; margin: 0 auto; }
+        
+        .animated-text-container-word span {
+            display: inline-block; opacity: 0; filter: blur(8px); transform: translateY(20px);
+            transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease;
+        }
+        
+        /* SEÇÕES GERAIS */
+        .about-section-new { background-color: var(--color-section-white); }
+        .about-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center; }
+        .about-content-wrapper { display: flex; flex-direction: column; gap: 2.5rem; text-align: center; align-items: center; }
+        .about-text-block { display: flex; flex-direction: column; gap: 1rem; }
+        .about-text-block p { color: var(--color-subtle); line-height: 1.7; }
+        .about-img { width: 100%; height: auto; object-fit: cover; border-radius: 24px; }
+        .about-button { width: fit-content; padding: 0.75rem 2rem; background-color: var(--color-primary); color: white; border-radius: 8px; text-decoration: none; font-weight: 500; box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05); transition: all 0.3s ease; }
+        .about-button:hover { background-color: var(--color-secondary); }
+        
+        .portfolio-section, .gallery-section { background-color: var(--color-background); }
+
+        /* GALERIA DE PROJETOS E LIGHTBOX */
+        .gallery-columns { max-width: 1400px; margin: 0 auto; column-gap: 1rem; columns: 1; }
+        .gallery-item { margin-bottom: 1rem; break-inside: avoid; }
+        .gallery-item img { width: 100%; height: auto; display: block; cursor: pointer; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out, box-shadow 0.3s; }
+        .gallery-item img:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .gallery-item.visible img { opacity: 1; transform: translateY(0); }
+
+        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 2rem; cursor: pointer; }
+        .lightbox.active { display: flex; }
+        .lightbox-content { max-width: 90%; max-height: 90vh; display: block; cursor: default; }
+        .lightbox-close { position: absolute; top: 20px; right: 35px; color: #fff; font-size: 40px; font-weight: bold; transition: 0.3s; cursor: pointer; }
+        .lightbox-close:hover, .lightbox-close:focus { color: #bbb; text-decoration: none; }
+        
+        /* NOVA SEÇÃO DE VÍDEO HEXAGONAL */
+        .hexagon-video-section { background-color: var(--color-section-white); }
+        .hexagon-video-container { max-width: 700px; margin: 0 auto; }
+        .hexagon-video-figure {
+            position: relative;
+            aspect-ratio: 1 / 1; /* Garante que seja um quadrado para o hexágono ficar proporcional */
+            display: grid;
+            place-items: center;
+        }
+        .hexagon-video-figure video {
+            width: 100%; height: 100%; object-fit: cover;
+            /* Efeito de máscara hexagonal usando clip-path */
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        /* VÍDEOS YOUTUBE */
+        .video-gallery { max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .youtube-btn-container { text-align: center; margin-top: 3rem; }
+        .youtube-channel-btn { display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.85rem 2.2rem; background-color: #FF0000; color: #FFFFFF; text-decoration: none; font-weight: 600; border-radius: 8px; transition: background-color 0.3s ease, transform 0.3s ease; }
+        .youtube-channel-btn:hover { background-color: #c40000; transform: translateY(-3px); }
+
+        /* NOVA SEÇÃO DE VÍDEOS TIKTOK */
+        .tiktok-section { background-color: var(--color-section-white); }
+        .tiktok-gallery {
+            max-width: 1300px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(325px, 1fr));
+            gap: 2rem; justify-items: center;
+        }
+        .tiktok-gallery .tiktok-embed {
+            margin: 0 !important; /* Sobrescreve margens do embed */
+        }
+        .tiktok-btn-container { text-align: center; margin-top: 3rem; }
+        .tiktok-channel-btn {
+            display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.85rem 2.2rem;
+            background-color: #000000; color: #FFFFFF; text-decoration: none;
+            font-weight: 600; border-radius: 8px; transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .tiktok-channel-btn:hover { background-color: #333; transform: translateY(-3px); }
+
+        /* FAQ */
+        .faq-section { background-color: var(--color-dark); color: #fff; }
+        .faq-section .section-title { color: #fff; }
+        .faq-section .section-title::after { background-color: var(--color-secondary); }
+        .faq-container { max-width: 800px; margin: 0 auto; }
+        .faq-item { border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding: 1.5rem 0; }
+        .faq-question { display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 1.2rem; font-weight: 500; }
+        .faq-question i { transition: transform 0.3s ease; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out, padding 0.4s ease; color: rgba(255, 255, 255, 0.8); }
+        .faq-item.active .faq-answer { max-height: 200px; padding-top: 1rem; }
+        .faq-item.active .faq-question i { transform: rotate(45deg); }
+
+        /* CONTATO E FORMULÁRIO */
+        .contact-section { background-color: var(--color-section-white); }
+        .contact-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 4rem; align-items: start; }
+        .contact-item { display: flex; align-items: flex-start; gap: 1.5rem; margin-bottom: 2rem; }
+        .contact-item i { color: var(--color-primary); font-size: 1.5rem; margin-top: 0.2rem; width: 30px; }
+        .contact-item a { color: inherit; text-decoration: none; transition: color 0.3s ease; }
+        .contact-item a:hover { color: var(--color-primary); }
+        .map-container { overflow: hidden; height: 100%; min-height: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .map-container iframe { width: 100%; height: 100%; border: none; }
+        
+        .form-section { background-color: var(--color-background); padding-top: 0;}
+        .form-container { max-width: 700px; margin: 0 auto; }
+        .contact-form { background: var(--color-section-white); padding: 3rem; box-shadow: 0 8px 30px rgba(0,0,0,0.05); }
+        .form-row { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px 16px; background: #f0f0f0; border: 1px solid #ccc; transition: border-color 0.3s ease; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--color-primary); }
+        .form-submit { width: 100%; padding: 15px; background: var(--color-primary); border: none; color: #FFFFFF; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; }
+        .form-submit:hover { background-color: var(--color-secondary); }
+
+        .hotmart-cta-section { background-color: var(--color-dark); color: var(--color-section-white); text-align: center; padding: 4rem 2rem; }
+        .hotmart-cta-section h3 { font-family: var(--font-body); font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 600; margin-bottom: 1rem; }
+        .hotmart-cta-section p { max-width: 600px; margin: 0 auto 2rem auto; color: rgba(255,255,255,0.8); }
+        .hotmart-cta-button { display: inline-block; padding: 0.85rem 2.5rem; background-color: var(--color-secondary); color: var(--color-dark); text-decoration: none; font-weight: 700; border-radius: 8px; transition: all 0.3s ease; }
+        .hotmart-cta-button:hover { background-color: var(--color-section-white); transform: translateY(-3px); }
+
+        /* LINHA SEPARADORA E FOOTER */
+        .footer-separator {
+            border-top: 1px solid #e0e0e0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .site-footer { 
+            background-color: var(--color-dark);
+            padding: 2.5rem 2rem 1.5rem; color: #a0a0a0; 
+        }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; }
+        .footer-logo { height: 80px; }
+        .footer-social { display: flex; gap: 1rem; }
+        .footer-social a { width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: background-color 0.3s ease; }
+        .footer-social a:hover { background-color: var(--color-primary); }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); margin-top: 2rem; padding-top: 1.5rem; text-align: center; font-size: 0.9rem; }
+        
+        /* Media Queries */
+        @media (min-width: 1024px) {
+            .about-grid { grid-template-columns: 1fr 1fr; }
+            .about-content-wrapper { text-align: left; align-items: flex-start; gap: 1.5rem; }
+            .about-content-wrapper .section-title-wrapper { width: 100%; text-align: left; margin-bottom: 1.5rem; }
+            .about-content-wrapper .section-title::after { left: 0; transform: translateX(0); }
+            .contact-container { grid-template-columns: 1fr 1fr; }
+            .gallery-columns { columns: 3; }
+        }
+        @media (min-width: 768px) {
+            .video-gallery { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); }
+            .gallery-columns { columns: 2; }
+            .form-row { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 767px) {
+            .header-content { height: 70px; }
+            .header-logo { height: 60px; }
+            .nav-menu { display: none; }
+            .mobile-menu-toggle { display: block; }
+            section { padding: 4rem 1.5rem; }
+            .map-container { min-height: 350px; }
+            .footer-content { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loader">
+        <img src="img/logo_cesar_transparente.png" alt="Carregando - Logo Cesar Construções">
+    </div>
+
+    <header class="site-header">
+        <div class="header-content">
+            <a href="#hero"><img src="img/logo_cesar_transparente.png" alt="Logo Cesar Construções" class="header-logo"></a>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#hero">Início</a></li>
+                    <li><a href="#about">Sobre</a></li>
+                    <li><a href="#galeria">Galeria</a></li>
+                    <li><a href="#portfolio">Vídeos</a></li>
+                    <li><a href="#contact">Contato</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-toggle" aria-label="Abrir Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="mobile-menu-overlay">
+        <img src="img/logo_cesar_transparente.png" alt="Logo Cesar Construções" class="mobile-menu-logo">
+        <button class="mobile-menu-close" aria-label="Fechar Menu"><i class="fas fa-times"></i></button>
+        <nav>
+            <ul class="mobile-nav-menu">
+                <li><a href="#hero">Início</a></li>
+                <li><a href="#about">Sobre</a></li>
+                <li><a href="#galeria">Galeria</a></li>
+                <li><a href="#portfolio">Vídeos</a></li>
+                <li><a href="#contact">Contato</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <a href="https://wa.me/5511963777255?text=Olá! Vim pelo site e gostaria de um orçamento." class="whatsapp-float" target="_blank" aria-label="WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    
+    <button id="backToTopBtn" title="Voltar ao topo"><i class="fas fa-arrow-up"></i></button>
+
+    <main>
+        <section class="hero-section" id="hero">
+            <div class="hero-carousel-container">
+                <div class="carousel-slide"><img src="img/cesar1.png" alt="Projeto de banheiro em porcelanato"></div>
+                <div class="carousel-slide"><img src="img/cesar3.png" alt="Projeto de cozinha em porcelanato"></div>
+                <div class="carousel-slide"><img src="img/cesar8.png" alt="Bancada de cozinha em porcelanato"></div>
+                <div class="carousel-slide"><img src="img/cesar7.png" alt="Nicho de banheiro em porcelanato"></div>
+            </div>
+            <div class="carousel-dots"></div>
+            <div class="hero-content">
+                <h1 class="animated-text-container-word">Cesar Construções</h1>
+                <p>Especialista em Porcelanataria e Acabamentos de Alto Padrão.</p>
+            </div>
+        </section>
+        
+        <section class="about-section-new" id="about">
+            <div class="about-grid">
+                <div class="about-content-wrapper">
+                    <div class="section-title-wrapper">
+                        <h2 class="section-title animated-text-container-word">Sobre Mim</h2>
+                    </div>
+                    <div class="about-text-block">
+                        <p>Com mais de 8 anos de experiência, meu objetivo é entregar um acabamento impecável, utilizando as melhores técnicas e ferramentas para construir bancadas, pisos e revestimentos de alto padrão, transformando ambientes e garantindo a satisfação total.</p>
+                        <p style="font-style: italic; color: var(--color-subtle); border-left: 3px solid var(--color-secondary); padding-left: 1rem;">"A sabedoria de um homem não se mede pela quantidade de informação que ele possui, e sim pelo uso ao qual ele faz dela!"</p>
+                    </div>
+                    <a href="#contact" class="about-button">Peça seu Orçamento</a>
+                </div>
+                <img class="about-img" src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop" alt="Profissional da Construção Civil" />
+            </div>
+        </section>
+
+        <section class="gallery-section" id="galeria">
+            <div class="section-title-wrapper">
+                <h2 class="section-title animated-text-container-word">Galeria de Projetos</h2>
+            </div>
+            <div class="gallery-columns">
+                <div class="gallery-item"><img src="img/cesar1.png" alt="Banheiro luxuoso com detalhes em porcelanato" /></div>
+                <div class="gallery-item"><img src="img/cesar2.png" alt="Assentamento de piso de grande formato" /></div>
+                <div class="gallery-item"><img src="img/cesar3.png" alt="Cozinha moderna com ilha de porcelanato" /></div>
+                <div class="gallery-item"><img src="img/cesar4.png" alt="Sala de estar com parede revestida" /></div>
+                <div class="gallery-item"><img src="img/cesar5.png" alt="Detalhe de corte em 45 graus (meia esquadria)" /></div>
+                <div class="gallery-item"><img src="img/cesar6.png" alt="Ambiente residencial com piso de porcelanato" /></div>
+                <div class="gallery-item"><img src="img/cesar7.png" alt="Nicho de banheiro em porcelanato" /></div>
+                <div class="gallery-item"><img src="img/cesar8.png" alt="Bancada de cozinha em porcelanato imitando mármore" /></div>
+                <div class="gallery-item"><img src="img/cesar9.png" alt="Área externa com piso de porcelanato" /></div>
+                <div class="gallery-item"><img src="img/cesar10.png" alt="Área externa com piso de porcelanato" /></div>
+            </div>
+        </section>
+        
+        <section class="hexagon-video-section">
+            <div class="hexagon-video-container">
+                <figure class="hexagon-video-figure">
+                    <video autoplay muted loop playsinline>
+                        <source src="img/cesar_video.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </figure>
+            </div>
+        </section>
+
+        <section class="portfolio-section" id="portfolio">
+            <div class="section-title-wrapper">
+                <h2 class="section-title animated-text-container-word">Vídeos do YouTube</h2>
+            </div>
+            <div class="video-gallery">
+                <div class="video-wrapper"><iframe src="https://www.youtube.com/embed/oSyhorPB228?si=8lW1B71-aqRqx_tu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+                <div class="video-wrapper"><iframe src="https://www.youtube.com/embed/hzBbAVF8zZo?si=Ib93RMp1HS_tWQEt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+                <div class="video-wrapper"><iframe src="https://www.youtube.com/embed/w4LJLnJ50_A?si=EImaRvzs5VcZaGDP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+            </div>
+            <div class="youtube-btn-container">
+                <a href="https://www.youtube.com/@Cesarconstrucoes" class="youtube-channel-btn" target="_blank">
+                    <i class="fab fa-youtube"></i> Veja o meu canal completo
+                </a>
+            </div>
+        </section>
+
+        <section class="tiktok-section">
+            <div class="section-title-wrapper">
+                <h2 class="section-title animated-text-container-word">Vídeos do TikTok</h2>
+            </div>
+            <div class="tiktok-gallery">
+                <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@cesarconstrucoes10/video/7216090401076219142" data-video-id="7216090401076219142" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@cesarconstrucoes10" href="https://www.tiktok.com/@cesarconstrucoes10?refer=embed">@cesarconstrucoes10</a> agora ficou fácil muito fácil <a title="interesting" target="_blank" href="https://www.tiktok.com/tag/interesting?refer=embed">#interesting</a> <a title="oba" target="_blank" href="https://www.tiktok.com/tag/oba?refer=embed">#oba</a> <a title="cesarconstrucoes10" target="_blank" href="https://www.tiktok.com/tag/cesarconstrucoes10?refer=embed">#cesarconstrucoes10</a> <a target="_blank" title="♬ som original - cesar  construcoes" href="https://www.tiktok.com/music/som-original-7216090443598744326?refer=embed">♬ som original - cesar  construcoes</a> </section> </blockquote>
+                <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@cesarconstrucoes10/video/7208342763224550662" data-video-id="7208342763224550662" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@cesarconstrucoes10" href="https://www.tiktok.com/@cesarconstrucoes10?refer=embed">@cesarconstrucoes10</a> como cortar porcelanato 180x90 esta dica não tem no Google <a title="cesarconstrucoes10" target="_blank" href="https://www.tiktok.com/tag/cesarconstrucoes10?refer=embed">#cesarconstrucoes10</a> <a title="porcelanato" target="_blank" href="https://www.tiktok.com/tag/porcelanato?refer=embed">#porcelanato</a> <a title="interiordesign" target="_blank" href="https://www.tiktok.com/tag/interiordesign?refer=embed">#interiordesign</a> <a title="oba" target="_blank" href="https://www.tiktok.com/tag/oba?refer=embed">#oba</a> <a target="_blank" title="♬ som original - cesar  construcoes" href="https://www.tiktok.com/music/som-original-7208342756862380805?refer=embed">♬ som original - cesar  construcoes</a> </section> </blockquote>
+                <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@cesarconstrucoes10/video/7179706921082047750" data-video-id="7179706921082047750" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@cesarconstrucoes10" href="https://www.tiktok.com/@cesarconstrucoes10?refer=embed">@cesarconstrucoes10</a> pia lavabo porcelanato <a title="oba" target="_blank" href="https://www.tiktok.com/tag/oba?refer=embed">#oba</a> <a title="interiores" target="_blank" href="https://www.tiktok.com/tag/interiores?refer=embed">#interiores</a> <a title="banheiros" target="_blank" href="https://www.tiktok.com/tag/banheiros?refer=embed">#banheiros</a> <a target="_blank" title="♬ som original - Lyrics Gospel" href="https://www.tiktok.com/music/som-original-7003350985867283205?refer=embed">♬ som original - Lyrics Gospel</a> </section> </blockquote>
+            </div>
+            <div class="tiktok-btn-container">
+                <a href="https://www.tiktok.com/@cesarconstrucoes10" class="tiktok-channel-btn" target="_blank">
+                    <i class="fab fa-tiktok"></i> Veja todos os vídeos
+                </a>
+            </div>
+        </section>
+
+        <section class="faq-section" id="faq">
+            <div class="section-title-wrapper"><h2 class="section-title">Perguntas Frequentes</h2></div>
+            <div class="faq-container">
+                <div class="faq-item"><div class="faq-question"><span>Quais serviços de porcelanataria você oferece?</span><i class="fas fa-plus"></i></div><div class="faq-answer"><p>Ofereço uma gama completa de serviços, incluindo assentamento de pisos e revestimentos, construção de bancadas de cozinha, nichos de banheiro, ilhas e painéis de TV em porcelanato.</p></div></div>
+                <div class="faq-item"><div class="faq-question"><span>Você trabalha com porcelanatos de grandes formatos?</span><i class="fas fa-plus"></i></div><div class="faq-answer"><p>Sim, sou especialista em cortes e instalação de lastras e porcelanatos de grandes formatos, utilizando ferramentas adequadas para garantir um acabamento perfeito e sem trincas.</p></div></div>
+                <div class="faq-item"><div class="faq-question"><span>Qual a vantagem de fazer uma bancada em porcelanato?</span><i class="fas fa-plus"></i></div><div class="faq-answer"><p>O porcelanato é um material de alta durabilidade, resistente a manchas, riscos e calor. Além disso, oferece uma variedade incrível de designs, imitando pedras naturais com um custo-benefício superior e manutenção mais simples.</p></div></div>
+                <div class="faq-item"><div class="faq-question"><span>Como posso solicitar um orçamento?</span><i class="fas fa-plus"></i></div><div class="faq-answer"><p>Você pode entrar em contato diretamente pelo botão do WhatsApp no site ou preencher o formulário de contato abaixo. Retornarei o mais breve possível para entender seu projeto.</p></div></div>
+            </div>
+        </section>
+
+        <section class="contact-section" id="contact">
+            <div class="section-title-wrapper"><h2 class="section-title animated-text-container-word">Entre em Contato</h2></div>
+            <div class="contact-container">
+                <div class="contact-info-section">
+                    <div class="contact-item"><i class="fab fa-whatsapp"></i><div><h4>WhatsApp</h4><p><a href="https://wa.me/5511963777255" target="_blank">(11) 96377-7255</a></p></div></div>
+                    <div class="contact-item"><i class="fab fa-instagram"></i><div><h4>Instagram</h4><p><a href="https://www.instagram.com/cesarconstrucoes10/" target="_blank">@cesarconstrucoes10</a></p></div></div>
+                    <div class="contact-item"><i class="fab fa-youtube"></i><div><h4>YouTube</h4><p><a href="https://www.youtube.com/@Cesarconstrucoes" target="_blank">@Cesarconstrucoes</a></p></div></div>
+                    <div class="contact-item"><i class="fab fa-tiktok"></i><div><h4>TikTok</h4><p><a href="https://www.tiktok.com/@cesarconstrucoes10" target="_blank">@cesarconstrucoes10</a></p></div></div>
+                    <div class="contact-item"><i class="fas fa-map-marker-alt"></i><div><h4>Localização</h4><p>Atendimento em São Paulo e região.</p></div></div>
+                </div>
+                <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d116995.14569584747!2d-46.76413204999999!3d-23.68216085!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59a3521b4715%3A0xc6655c65b93f0b1b!2sS%C3%A3o%20Paulo%2C%20State%20of%20S%C3%A3o%20Paulo%2C%20Brazil!5e0!3m2!1sen!2sus!4v1701362704944!5m2!1sen!2sus" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+           <div class="form-container">
+                <div class="contact-form">
+                    <div class="section-title-wrapper"><h2 class="section-title animated-text-container-word">Peça seu Orçamento</h2></div>
+                    <form id="contactForm">
+                        <div class="form-row"><div class="form-group"><input type="text" id="name" name="name" required placeholder="Seu Nome"></div><div class="form-group"><input type="tel" id="phone" name="phone" required placeholder="Seu WhatsApp"></div></div>
+                        <div class="form-group"><input type="email" id="email" name="email" placeholder="Seu E-mail (Opcional)"></div>
+                        <div class="form-group"><textarea id="message" name="message" rows="5" placeholder="Conte-me um pouco sobre seu projeto..." required></textarea></div>
+                        <button type="submit" class="form-submit">Enviar via WhatsApp</button>
+                    </form>
+                </div>
+           </div>
+        </section>
+        
+        <section class="hotmart-cta-section">
+            <h3>Quer Aprender Mais Sobre Construção?</h3>
+            <p>Se você deseja aprofundar seus conhecimentos e se tornar um especialista, clique no botão abaixo e acesse nosso curso completo.</p>
+            <a href="https://go.hotmart.com/U76197879N?dp=1" class="hotmart-cta-button" target="_blank">Ver Curso na Hotmart</a>
+        </section>
+    </main>
+    
+    <div class="footer-separator"></div>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <a href="#hero"><img src="img/logo_cesar_transparente.png" alt="Logo Cesar Construções" class="footer-logo"></a>
+            <div class="footer-social">
+                <a href="https://wa.me/5511963777255" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://www.instagram.com/cesarconstrucoes10/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.youtube.com/@Cesarconstrucoes" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@cesarconstrucoes10" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+        <div class="footer-bottom"><p>© 2025 Cesar Construções. Todos os direitos reservados.</p></div>
+    </footer>
+    
+    <div id="lightbox" class="lightbox">
+        <span class="lightbox-close" id="lightboxClose">×</span>
+        <img class="lightbox-content" id="lightboxImg">
+    </div>
+
+    <script async src="https://www.tiktok.com/embed.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+
+            // --- LOADER ---
+            const loader = document.getElementById('loader');
+            if (loader) {
+                body.classList.add('no-scroll');
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                    body.classList.remove('no-scroll');
+                }, 1500);
+            }
+
+            // --- HEADER SCROLL ---
+            const header = document.querySelector('.site-header');
+            if (header) {
+                window.addEventListener('scroll', () => {
+                    header.classList.toggle('scrolled', window.scrollY > 50);
+                });
+            }
+            
+            // --- BACK TO TOP BUTTON ---
+            const backToTopBtn = document.getElementById('backToTopBtn');
+            if (backToTopBtn) {
+                window.addEventListener('scroll', () => {
+                    backToTopBtn.classList.toggle('show', window.scrollY > 300);
+                });
+                backToTopBtn.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // --- TEXT ANIMATION ON SCROLL ---
+            const setupTextAnimation = (container) => {
+                if(container.querySelector('span')) return;
+                const text = container.textContent.trim();
+                container.innerHTML = ''; 
+                const words = text.split(/\s+/);
+                words.forEach((word, index) => {
+                    const span = document.createElement('span');
+                    span.textContent = word;
+                    span.style.transitionDelay = `${index * 0.05}s`;
+                    container.appendChild(span);
+                    if (index < words.length - 1) container.append(' ');
+                });
+            };
+            document.querySelectorAll('.animated-text-container-word').forEach(setupTextAnimation);
+
+            // --- INTERSECTION OBSERVER FOR ANIMATIONS ---
+            const observerCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target;
+                        if (target.classList.contains('animated-text-container-word')) {
+                            target.querySelectorAll('span').forEach(span => {
+                                span.style.opacity = '1';
+                                span.style.filter = 'blur(0px)';
+                                span.style.transform = 'translateY(0)';
+                            });
+                        } else if (target.classList.contains('gallery-item')) {
+                            target.classList.add('visible');
+                        }
+                        observer.unobserve(target);
+                    }
+                });
+            };
+            const animationObserver = new IntersectionObserver(observerCallback, { threshold: 0.1 });
+            document.querySelectorAll('.animated-text-container-word, .gallery-item').forEach(el => {
+                animationObserver.observe(el);
+            });
+            
+            // --- MOBILE MENU ---
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const mobileClose = document.querySelector('.mobile-menu-close');
+            const mobileOverlay = document.querySelector('.mobile-menu-overlay');
+            const mobileMenuLinks = document.querySelectorAll('.mobile-nav-menu a');
+            if (mobileToggle && mobileOverlay && mobileClose) {
+                const toggleMenu = () => {
+                    const isActive = mobileOverlay.classList.contains('active');
+                    mobileOverlay.classList.toggle('active');
+                    body.classList.toggle('no-scroll', !isActive);
+                };
+                mobileToggle.addEventListener('click', toggleMenu);
+                mobileClose.addEventListener('click', toggleMenu);
+                mobileMenuLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (mobileOverlay.classList.contains('active')) toggleMenu();
+                    });
+                });
+            }
+            
+            // --- FAQ ACCORDION ---
+            document.querySelectorAll('.faq-item').forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    const currentlyActive = document.querySelector('.faq-item.active');
+                    if (currentlyActive && currentlyActive !== item) {
+                        currentlyActive.classList.remove('active');
+                    }
+                    item.classList.toggle('active');
+                });
+            });
+
+            // --- CONTACT FORM ---
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(contactForm);
+                    const name = formData.get('name'), phone = formData.get('phone'), email = formData.get('email'), message = formData.get('message');
+                    if (name && phone && message) {
+                        let whatsappMessage = `*Novo Contato do Site*\n\n*Nome:* ${name}\n*WhatsApp:* ${phone}\n`;
+                        if (email) whatsappMessage += `*E-mail:* ${email}\n`;
+                        whatsappMessage += `\n*Mensagem:*\n${message}`;
+                        const whatsappUrl = `https://wa.me/5511963777255?text=${encodeURIComponent(whatsappMessage)}`;
+                        window.open(whatsappUrl, '_blank');
+                        contactForm.reset();
+                    } else {
+                        alert('Por favor, preencha todos os campos obrigatórios.');
+                    }
+                });
+            }
+
+            // --- SMOOTH SCROLL FOR ANCHOR LINKS ---
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        const headerHeight = document.querySelector('.site-header').offsetHeight;
+                        const targetPosition = targetElement.offsetTop - headerHeight;
+                        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // --- HERO CAROUSEL COM DRAG/SWIPE ---
+            const carousel = document.querySelector('.hero-section');
+            const container = document.querySelector('.hero-carousel-container');
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dotsContainer = document.querySelector('.carousel-dots');
+            if(container && slides.length > 0) {
+                let isDragging = false, startPos = 0, currentTranslate = 0, prevTranslate = 0, animationID;
+                let currentIndex = 0;
+                let autoPlayInterval = setInterval(nextSlide, 5000);
+
+                // Criar os dots
+                slides.forEach((_, i) => {
+                    const dot = document.createElement('div');
+                    dot.classList.add('dot');
+                    if (i === 0) dot.classList.add('active');
+                    dot.addEventListener('click', () => {
+                        currentIndex = i;
+                        setPositionByIndex();
+                        updateDots();
+                        resetAutoPlay();
+                    });
+                    dotsContainer.appendChild(dot);
+                });
+                const dots = document.querySelectorAll('.carousel-dots .dot');
+
+                function updateDots() {
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    dots[currentIndex].classList.add('active');
+                }
+
+                function nextSlide() {
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    setPositionByIndex();
+                    updateDots();
+                }
+                
+                function resetAutoPlay() {
+                    clearInterval(autoPlayInterval);
+                    autoPlayInterval = setInterval(nextSlide, 5000);
+                }
+
+                slides.forEach((slide, index) => {
+                    slide.addEventListener('touchstart', (e) => touchStart(index, e));
+                    slide.addEventListener('touchend', touchEnd);
+                    slide.addEventListener('touchmove', touchMove);
+                    slide.addEventListener('mousedown', (e) => touchStart(index, e));
+                    slide.addEventListener('mouseup', touchEnd);
+                    slide.addEventListener('mouseleave', touchEnd);
+                    slide.addEventListener('mousemove', touchMove);
+                });
+
+                function touchStart(index, event) {
+                    currentIndex = index;
+                    startPos = getPositionX(event);
+                    isDragging = true;
+                    animationID = requestAnimationFrame(animation);
+                    carousel.style.cursor = 'grabbing';
+                    clearInterval(autoPlayInterval);
+                }
+
+                function touchEnd() {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    cancelAnimationFrame(animationID);
+                    const movedBy = currentTranslate - prevTranslate;
+
+                    if (movedBy < -100 && currentIndex < slides.length - 1) currentIndex += 1;
+                    if (movedBy > 100 && currentIndex > 0) currentIndex -= 1;
+                    
+                    setPositionByIndex();
+                    carousel.style.cursor = 'grab';
+                    resetAutoPlay();
+                }
+
+                function touchMove(event) {
+                    if (isDragging) {
+                        const currentPosition = getPositionX(event);
+                        currentTranslate = prevTranslate + currentPosition - startPos;
+                    }
+                }
+
+                function getPositionX(event) {
+                    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+                }
+
+                function animation() {
+                    setSliderPosition();
+                    if (isDragging) requestAnimationFrame(animation);
+                }
+
+                function setSliderPosition() {
+                    container.style.transform = `translateX(${currentTranslate}px)`;
+                }
+
+                function setPositionByIndex() {
+                    currentTranslate = currentIndex * -window.innerWidth;
+                    prevTranslate = currentTranslate;
+                    setSliderPosition();
+                    updateDots();
+                }
+                
+                window.addEventListener('resize', setPositionByIndex);
+            }
+
+            // --- LIGHTBOX DA GALERIA ---
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const lightboxClose = document.getElementById('lightboxClose');
+            const galleryImages = document.querySelectorAll('.gallery-item img');
+            if (lightbox) {
+                galleryImages.forEach(img => {
+                    img.addEventListener('click', () => {
+                        lightbox.classList.add('active');
+                        lightboxImg.src = img.src;
+                        body.classList.add('no-scroll');
+                    });
+                });
+
+                const closeLightbox = () => {
+                    lightbox.classList.remove('active');
+                    body.classList.remove('no-scroll');
+                }
+                lightboxClose.addEventListener('click', closeLightbox);
+                lightbox.addEventListener('click', (e) => {
+                    if (e.target === lightbox) closeLightbox();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
