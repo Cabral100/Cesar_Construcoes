@@ -119,38 +119,38 @@
             width: 80px; height: 4px; background-color: var(--color-primary);
         }
         
-        /* HERO COM CAROUSEL DRAGGABLE */
+        /* HERO SECTION */
         .hero-section {
             height: 100vh; position: relative; overflow: hidden;
             display: grid; place-content: center; text-align: center;
-            cursor: grab;
+        }
+        .hero-bg-video {
+            display: none; /* Escondido por padrão, visível no mobile */
+            position: absolute; top: 50%; left: 50%;
+            width: auto; height: auto; min-width: 100%; min-height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover; z-index: -2;
         }
         .hero-carousel-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2; display: flex;
             transition: transform 0.5s ease-out;
         }
-        .carousel-slide {
-            min-width: 100%; height: 100%;
-        }
+        .carousel-slide { min-width: 100%; height: 100%; }
         .carousel-slide img {
             width: 100%; height: 100%; object-fit: cover;
-            user-select: none; pointer-events: none; /* Impede arrastar a imagem */
+            user-select: none; pointer-events: none;
         }
+        .hero-section { cursor: grab; }
         .carousel-dots {
-            position: absolute; bottom: 30px; left: 50%;
-            transform: translateX(-50%);
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
             display: flex; gap: 10px; z-index: 10;
         }
         .carousel-dots .dot {
-            width: 12px; height: 12px;
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 50%; cursor: pointer;
-            transition: background-color 0.3s ease;
+            width: 12px; height: 12px; background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%; cursor: pointer; transition: background-color 0.3s ease;
         }
-        .carousel-dots .dot.active {
-            background-color: white;
-        }
+        .carousel-dots .dot.active { background-color: white; }
         .hero-section::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background-color: rgba(0, 0, 0, 0.6); z-index: -1;
@@ -158,6 +158,14 @@
         .hero-content { max-width: 800px; padding: 0 1rem; position: relative; z-index: 1; }
         .hero-section h1 { font-size: clamp(2.8rem, 6vw, 4.5rem); margin-bottom: 1rem; font-family: var(--font-heading); color: #FFFFFF; }
         .hero-section p { font-size: clamp(1rem, 2vw, 1.25rem); color: #f0f0f0; max-width: 600px; margin: 0 auto; }
+        .play-video-btn {
+            display: none; /* Escondido por padrão, visível no mobile */
+            background: rgba(255, 255, 255, 0.2); border: 2px solid white; color: white;
+            width: 70px; height: 70px; border-radius: 50%; font-size: 1.5rem;
+            cursor: pointer; margin-top: 2rem; transition: background 0.3s ease;
+            padding-left: 5px; /* Ajuste para centralizar o ícone de play */
+        }
+        .play-video-btn:hover { background: rgba(255, 255, 255, 0.4); }
         
         .animated-text-container-word span {
             display: inline-block; opacity: 0; filter: blur(8px); transform: translateY(20px);
@@ -183,38 +191,31 @@
         .gallery-item img:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
         .gallery-item.visible img { opacity: 1; transform: translateY(0); }
 
-        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 2rem; cursor: pointer; }
+        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.9); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 2rem; cursor: pointer; }
         .lightbox.active { display: flex; }
         .lightbox-content { max-width: 90%; max-height: 90vh; display: block; cursor: default; }
-        .lightbox-close { position: absolute; top: 20px; right: 35px; color: #fff; font-size: 40px; font-weight: bold; transition: 0.3s; cursor: pointer; }
+        .lightbox-close {
+            position: absolute; top: 25px; right: 35px; color: #fff;
+            font-size: 45px; font-weight: 300; /* Deixa o X mais fino */
+            transition: 0.3s; cursor: pointer; line-height: 1;
+        }
         .lightbox-close:hover, .lightbox-close:focus { color: #bbb; text-decoration: none; }
+        #video-lightbox .lightbox-video-container {
+            width: 90%; max-width: 960px; height: auto;
+            background: #000; cursor: default;
+        }
+        #video-lightbox video { width: 100%; height: 100%; display: block; }
         
-        /* NOVA SEÇÃO DE VÍDEO TELA CHEIA (MODIFICADO) */
-        .fullscreen-video-section {
-            height: 100vh; /* Altura total da tela */
-            width: 100vw;  /* Largura total da tela */
-            position: relative;
-            overflow: hidden;
-            padding: 0; /* Remove o padding padrão da 'section' */
-            background-color: var(--color-dark); /* Cor de fundo caso o vídeo não carregue */
+        /* NOVA SEÇÃO DE VÍDEO HEXAGONAL */
+        .hexagon-video-section { background-color: var(--color-section-white); }
+        .hexagon-video-container { max-width: 700px; margin: 0 auto; }
+        .hexagon-video-figure {
+            position: relative; aspect-ratio: 1 / 1;
+            display: grid; place-items: center;
         }
-        .fullscreen-video-bg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Cobre todo o espaço, pode cortar partes do vídeo para preencher a tela */
-            transform: translate(-50%, -50%);
-            z-index: 1;
-        }
-        /* Adiciona uma sobreposição escura para legibilidade de texto (caso adicione texto no futuro) */
-        .fullscreen-video-section::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0, 0, 0, 0.4); /* Overlay escuro */
-            z-index: 2;
+        .hexagon-video-figure video {
+            width: 100%; height: 100%; object-fit: cover;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
         }
 
         /* VÍDEOS YOUTUBE */
@@ -232,9 +233,7 @@
             display: grid; grid-template-columns: repeat(auto-fit, minmax(325px, 1fr));
             gap: 2rem; justify-items: center;
         }
-        .tiktok-gallery .tiktok-embed {
-            margin: 0 !important; /* Sobrescreve margens do embed */
-        }
+        .tiktok-gallery .tiktok-embed { margin: 0 !important; }
         .tiktok-btn-container { text-align: center; margin-top: 3rem; }
         .tiktok-channel-btn {
             display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.85rem 2.2rem;
@@ -242,9 +241,8 @@
             font-weight: 600; border-radius: 8px; transition: background-color 0.3s ease, transform 0.3s ease;
         }
         .tiktok-channel-btn:hover { background-color: #333; transform: translateY(-3px); }
-        #meu_nome {
-            color: #FFFFFF; text-decoration: none; font-weight: 600;
-        }
+        #meu_nome { color: #FFFFFF; text-decoration: none; font-weight: 600; }
+        
         /* FAQ */
         .faq-section { background-color: var(--color-dark); color: #fff; }
         .faq-section .section-title { color: #fff; }
@@ -284,15 +282,8 @@
         .hotmart-cta-button:hover { background-color: var(--color-section-white); transform: translateY(-3px); }
 
         /* LINHA SEPARADORA E FOOTER */
-        .footer-separator {
-            border-top: 1px solid #e0e0e0;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .site-footer { 
-            background-color: var(--color-dark);
-            padding: 2.5rem 2rem 1.5rem; color: #a0a0a0; 
-        }
+        .footer-separator { border-top: 1px solid #e0e0e0; max-width: 1200px; margin: 0 auto; }
+        .site-footer { background-color: var(--color-dark); padding: 2.5rem 2rem 1.5rem; color: #a0a0a0; }
         .footer-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; }
         .footer-logo { height: 80px; }
         .footer-social { display: flex; gap: 1rem; }
@@ -322,6 +313,11 @@
             section { padding: 4rem 1.5rem; }
             .map-container { min-height: 350px; }
             .footer-content { flex-direction: column; text-align: center; }
+            /* --- MUDANÇAS PARA O VÍDEO NO MOBILE --- */
+            .hero-carousel-container, .carousel-dots { display: none; }
+            .hero-bg-video { display: block; }
+            .play-video-btn { display: inline-block; }
+            .hero-section { cursor: default; }
         }
     </style>
 </head>
@@ -370,6 +366,9 @@
 
     <main>
         <section class="hero-section" id="hero">
+             <video class="hero-bg-video" autoplay muted loop playsinline>
+                <source src="img/cesar_video.mp4" type="video/mp4">
+            </video>
             <div class="hero-carousel-container">
                 <div class="carousel-slide"><img src="img/cesar1.png" alt="Projeto de banheiro em porcelanato"></div>
                 <div class="carousel-slide"><img src="img/cesar3.png" alt="Projeto de cozinha em porcelanato"></div>
@@ -380,6 +379,7 @@
             <div class="hero-content">
                 <h1 class="animated-text-container-word">Cesar Construções</h1>
                 <p>Especialista em Porcelanataria e Acabamentos de Alto Padrão.</p>
+                 <button class="play-video-btn" aria-label="Play Video"><i class="fas fa-play"></i></button>
             </div>
         </section>
         
@@ -417,11 +417,15 @@
             </div>
         </section>
         
-        <section class="fullscreen-video-section">
-            <video autoplay muted loop playsinline class="fullscreen-video-bg">
-                <source src="img/cesar_video.mp4" type="video/mp4">
-                Seu navegador não suporta a tag de vídeo.
-            </video>
+        <section class="hexagon-video-section">
+            <div class="hexagon-video-container">
+                <figure class="hexagon-video-figure">
+                    <video autoplay muted loop playsinline>
+                        <source src="img/cesar_video.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </figure>
+            </div>
         </section>
 
         <section class="portfolio-section" id="portfolio">
@@ -521,6 +525,16 @@
         <span class="lightbox-close" id="lightboxClose">×</span>
         <img class="lightbox-content" id="lightboxImg">
     </div>
+
+    <div id="video-lightbox" class="lightbox">
+        <span class="lightbox-close" id="videoLightboxClose">×</span>
+        <div class="lightbox-video-container">
+            <video controls id="lightboxVideo" playsinline>
+                <source src="img/cesar_video.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
 
     <script async src="https://www.tiktok.com/embed.js"></script>
     <script>
@@ -661,7 +675,7 @@
                 });
             });
 
-            // --- HERO CAROUSEL COM DRAG/SWIPE ---
+            // --- HERO CAROUSEL (DESKTOP ONLY) ---
             const carousel = document.querySelector('.hero-section');
             const container = document.querySelector('.hero-carousel-container');
             const slides = document.querySelectorAll('.carousel-slide');
@@ -713,6 +727,7 @@
                 });
 
                 function touchStart(index, event) {
+                    if (window.innerWidth < 768) return; // Desativa drag no mobile
                     currentIndex = index;
                     startPos = getPositionX(event);
                     isDragging = true;
@@ -786,6 +801,36 @@
                 lightboxClose.addEventListener('click', closeLightbox);
                 lightbox.addEventListener('click', (e) => {
                     if (e.target === lightbox) closeLightbox();
+                });
+            }
+
+            // --- NOVO: LIGHTBOX DE VÍDEO ---
+            const playBtn = document.querySelector('.play-video-btn');
+            const videoLightbox = document.getElementById('video-lightbox');
+            const videoLightboxClose = document.getElementById('videoLightboxClose');
+            const lightboxVideo = document.getElementById('lightboxVideo');
+
+            if (playBtn && videoLightbox && lightboxVideo) {
+                const openVideoLightbox = () => {
+                    videoLightbox.classList.add('active');
+                    body.classList.add('no-scroll');
+                    lightboxVideo.currentTime = 0;
+                    lightboxVideo.play();
+                };
+
+                const closeVideoLightbox = () => {
+                    videoLightbox.classList.remove('active');
+                    body.classList.remove('no-scroll');
+                    lightboxVideo.pause();
+                };
+
+                playBtn.addEventListener('click', openVideoLightbox);
+                videoLightboxClose.addEventListener('click', closeVideoLightbox);
+                videoLightbox.addEventListener('click', (e) => {
+                    // Fecha somente se clicar no fundo (overlay), não no container do vídeo
+                    if (e.target === videoLightbox) {
+                        closeVideoLightbox();
+                    }
                 });
             }
         });
